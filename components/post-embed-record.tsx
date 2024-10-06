@@ -28,9 +28,9 @@ export function PostEmbedRecord({
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-2">
       {media && did && <Media embed={media} did={did} />}
-      <Post post={post} uri={embed.record.uri} />
-    </>
+      <Post post={post} uri={embed.record.uri} isEmbedded />
+    </div>
   );
 }

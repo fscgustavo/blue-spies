@@ -1,0 +1,6 @@
+- [] @s e hashtags em um texto precisam ter hightlight
+- [] Embedded vai precisar de external link sim
+- [x] Os vídeos precisam de um preview
+- [] Como vem o tweet que é uma resposta?
+- [] Testar embedded de embedded
+- [] Estilizar hashtag

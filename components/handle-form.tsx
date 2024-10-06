@@ -1,6 +1,8 @@
 import { useQueryState } from 'nuqs';
 import { FormEvent } from 'react';
 
+import { SearchInput } from './search-input';
+
 export function HandleForm() {
   const [handle, setHandle] = useQueryState('handle', { defaultValue: '' });
 
@@ -22,12 +24,7 @@ export function HandleForm() {
 
   return (
     <form onSubmit={onHandleSubmit}>
-      <input
-        placeholder="handle"
-        name="handle"
-        defaultValue={handle}
-        className="text-black"
-      />
+      <SearchInput defaultValue={handle} className="w-full" name="handle" />
     </form>
   );
 }

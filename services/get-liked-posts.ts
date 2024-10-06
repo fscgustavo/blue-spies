@@ -4,28 +4,65 @@ import {
   AtpAgent,
   AtUri,
 } from '@atproto/api';
-import useSWR from 'swr';
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+} from '@tanstack/react-query';
+import useSWR, { SWRConfiguration } from 'swr';
 
 import { DEFAULT_SERVICE } from '@/constants';
 
 type GetLikedPostsParams = {
   service?: string;
   handle: string | null;
+  cursor?: string;
+};
+
+export type Post =
+  | {
+      uri: string;
+      value: AppBskyFeedPost.Record;
+      error: undefined;
+    }
+  | {
+      uri: string;
+      value: undefined;
+      error: string;
+    }
+  | {
+      uri: string;
+      value: undefined;
+      error: unknown;
+    }
+  | {
+      uri: string;
+      value: undefined;
+      error: string;
+    };
+
+export type LikedPostsResponse = {
+  posts: Post[];
+  cursor: string | undefined;
 };
 
 export async function getLikedPosts({
   service = DEFAULT_SERVICE,
   handle,
+  cursor,
 }: GetLikedPostsParams) {
   const agent = new AtpAgent({ service });
 
+  console.log('cursor usado', cursor);
+
   const {
-    data: { records },
+    data: { records, cursor: newCursor },
   } = await agent.com.atproto.repo.listRecords({
     repo: handle ?? '',
     collection: 'app.bsky.feed.like',
     limit: 5,
-    cursor: undefined,
+    cursor,
   });
 
   const likes = await Promise.all(
@@ -67,11 +104,31 @@ export async function getLikedPosts({
     }),
   );
 
-  return likes;
+  return { posts: likes, cursor: newCursor };
 }
 
-export function useLikedPosts({ service, handle }: GetLikedPostsParams) {
-  return useSWR(handle ? [service, handle] : undefined, () => {
-    return getLikedPosts({ service, handle });
+type UseLikedPostsParams = GetLikedPostsParams;
+
+export function useLikedPosts({ service, handle }: UseLikedPostsParams) {
+  return useInfiniteQuery<
+    LikedPostsResponse,
+    Error,
+    InfiniteData<LikedPostsResponse, unknown>,
+    QueryKey,
+    string | undefined
+  >({
+    queryKey: [service, handle],
+    queryFn: ({ pageParam }) =>
+      getLikedPosts({ service, handle, cursor: pageParam }),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => lastPage.cursor,
   });
+
+  // return useSWR<LikedPostsResponse>(
+  //   handle ? [service, handle, cursor] : undefined,
+  //   () => {
+  //     return getLikedPosts({ service, handle, cursor });
+  //   },
+  //   options,
+  // );
 }

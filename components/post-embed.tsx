@@ -48,5 +48,9 @@ export function PostEmbed({ embed, did }: PostEmbedProps) {
     );
   }
 
-  return 'Outro';
+  if (process.env.NODE_ENV === 'development') {
+    alert('formato não suportado');
+  }
+
+  return null;
 }

@@ -63,11 +63,22 @@ export function Media({ embed, did }: MediaProps) {
       : '/none.jpg';
 
     return (
-      <a href={embed.external.uri} target="_blank">
-        <Image src={src} width="1000" height="750" alt="depois" />
-        <div>
-          <p>{embed.external.title}</p>
-          <p>{embed.external.description}</p>
+      <a
+        href={embed.external.uri}
+        target="_blank"
+        className="block rounded-sm border"
+      >
+        {/*TODO: Alterar o alt*/}
+        <Image
+          src={src}
+          width="1000"
+          height="750"
+          alt="depois"
+          className="w-max rounded-t"
+        />
+        <div className="px-4 py-2">
+          <p className="font-bold">{embed.external.title}</p>
+          <p className="text-sm">{embed.external.description}</p>
         </div>
       </a>
     );

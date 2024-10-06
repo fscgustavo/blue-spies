@@ -14,6 +14,7 @@ export const RichText = ({ text, facets }: RichTextProps) => {
     if (segment.isLink()) {
       return (
         <a
+          className="text-primary hover:underline"
           key={`${segment.text}-${segment.link?.uri}`}
           href={segment.link?.uri}
         >
@@ -25,6 +26,7 @@ export const RichText = ({ text, facets }: RichTextProps) => {
     if (segment.isMention()) {
       return (
         <a
+          className="text-primary hover:underline"
           href={`${WEB_APP}/profile/${segment.mention?.did}`}
           key={`${segment.link?.uri}-${segment.text}`}
         >
