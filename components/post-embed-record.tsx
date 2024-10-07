@@ -1,5 +1,5 @@
 import { AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia } from '@atproto/api';
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 
 import { getPost } from '@/services/get-post';
 
@@ -21,7 +21,10 @@ export function PostEmbedRecord({
   cid,
   did,
 }: PostEmbedRecordProps) {
-  const { data: post } = useSWR(['post', uri], () => getPost({ uri, cid }));
+  const { data: post, isLoading } = useQuery({
+    queryKey: ['post', uri],
+    queryFn: () => getPost({ uri, cid }),
+  });
 
   if (!post) {
     return null;
@@ -30,7 +33,12 @@ export function PostEmbedRecord({
   return (
     <div className="flex flex-col gap-2">
       {media && did && <Media embed={media} did={did} />}
-      <Post post={post} uri={embed.record.uri} isEmbedded />
+      <Post
+        post={post}
+        uri={embed.record.uri}
+        isEmbedded
+        isEmbeddedLoading={isLoading}
+      />
     </div>
   );
 }

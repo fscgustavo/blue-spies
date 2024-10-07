@@ -1,6 +1,7 @@
 import { AppBskyEmbedImages } from '@atproto/api';
 import Image from 'next/image';
 
+import { cn } from '@/lib/utils';
 import { getBlobURL } from '@/utils/media';
 
 type ImageGridProps = {
@@ -10,16 +11,22 @@ type ImageGridProps = {
 
 export function ImageGrid({ images, did }: ImageGridProps) {
   return (
-    <div>
-      {images.map((image, idx) => (
-        <Image
-          src={getBlobURL({ did, ref: image.image })}
-          width={image.aspectRatio?.width}
-          height={image.aspectRatio?.height}
-          alt={image.alt}
-          key={idx}
-        />
-      ))}
+    <div
+      className={cn('grid gap-2', {
+        'grid-cols-2': images.length > 1,
+      })}
+    >
+      {images.map((image, idx) => {
+        return (
+          <Image
+            src={getBlobURL({ did, ref: image.image })}
+            width={image?.aspectRatio?.width ?? '480'}
+            height={image?.aspectRatio?.height ?? '480'}
+            alt={image.alt}
+            key={idx}
+          />
+        );
+      })}
     </div>
   );
 }

@@ -46,6 +46,9 @@ export function Media({ embed, did }: MediaProps) {
           height={embed.aspectRatio?.height}
           controls
           preload="none"
+          style={{
+            aspectRatio: `${embed.aspectRatio?.width}/${embed.aspectRatio?.height}`,
+          }}
         >
           <source
             src={getBlobURL({ did, ref: embed.video })}

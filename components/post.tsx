@@ -1,34 +1,47 @@
+'use client';
+
 import { AppBskyFeedPost, AtUri } from '@atproto/api';
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
-import Image from 'next/image';
 import { ComponentProps, forwardRef, useMemo } from 'react';
-import useSWR from 'swr';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import { DEFAULT_SERVICE, WEB_APP } from '@/constants';
 import { cn } from '@/lib/utils';
 import { getProfile } from '@/services/profile';
 
+import { PostAvatar } from './post-avatar';
 import { PostEmbed } from './post-embed';
 import { RichText } from './rich-text';
+import { Skeleton } from './ui/skeleton';
 
 type PostProps = {
   post: AppBskyFeedPost.Record;
   uri: string;
   service?: string;
   isEmbedded?: boolean;
+  isEmbeddedLoading?: boolean;
 } & ComponentProps<'article'>;
 
 export const Post = forwardRef<HTMLElement, PostProps>(
-  ({ post, uri, service = DEFAULT_SERVICE, isEmbedded, ...props }, ref) => {
+  (
+    {
+      post,
+      uri,
+      service = DEFAULT_SERVICE,
+      isEmbedded,
+      isEmbeddedLoading,
+      ...props
+    },
+    ref,
+  ) => {
     const atUri = useMemo(() => new AtUri(uri), [uri]);
 
-    // const { data } = useSWR(['post', uri], () => getPost({ post, uri }));
-
-    const { data: profileData } = useSWR(
-      ['profile', service, atUri.hostname],
-      () => getProfile({ handle: atUri.hostname }),
-    );
+    const { data: profileData, isLoading: isLoadingProfile } = useQuery({
+      queryKey: ['profile', service, atUri.hostname],
+      queryFn: () => getProfile({ handle: atUri.hostname }),
+    });
 
     const date = useMemo(() => {
       if (!post.createdAt) {
@@ -44,75 +57,104 @@ export const Post = forwardRef<HTMLElement, PostProps>(
       };
     }, [post.createdAt]);
 
+    if ((isLoadingProfile || isEmbeddedLoading) && isEmbedded) {
+      return <Skeleton className="h-80 w-full" />;
+    }
+
     if (!profileData) {
       return;
     }
 
+    const links = {
+      profile: `${WEB_APP}/profile/${profileData ? profileData.handle : atUri.hostname}`,
+      post: `${WEB_APP}/profile/${atUri.hostname}/post/${atUri.rkey}`,
+    };
+
     return (
-      <article
-        className={cn('flex gap-3 border-b text-card-foreground', {
-          'rounded-sm border p-3': isEmbedded,
-          'border-b px-4 py-3 first:pt-8 last:border-b-0 last:pb-10':
-            !isEmbedded,
-        })}
-        {...props}
-        ref={ref}
-      >
-        <Image
-          width="48"
-          height="48"
-          src={profileData.profile.photo}
-          alt={`foto de perfil do ${atUri.hostname}`}
-          className={cn('h-fit rounded-full', {
-            'h-6 w-6': isEmbedded,
-          })}
-        />
-        <div>
-          <div className="mb-1 flex items-center">
-            <a
-              href={`${WEB_APP}/profile/${profileData ? profileData.handle : atUri.hostname}`}
-              target="_blank"
+      <ErrorBoundary fallback={null}>
+        <article
+          className={cn(
+            'relative flex gap-3 border-b text-sm text-card-foreground lg:text-base',
+            {
+              'rounded-sm border p-3': isEmbedded,
+              'border-b px-4 py-3 first:border-t last:border-b-0 last:pb-10 lg:first:border-t-0 lg:first:pt-8':
+                !isEmbedded,
+            },
+          )}
+          {...props}
+          ref={ref}
+        >
+          <a href={links.profile} target="_blank">
+            <PostAvatar
+              hostname={atUri.hostname}
+              src={profileData.profile.photo}
+              isEmbedded={isEmbedded}
+              className={cn('shrink-0', {
+                'hidden lg:block': isEmbedded,
+              })}
+            />
+          </a>
+          <div className="w-full">
+            <div
+              className={cn('mb-1 flex sm:items-center', {
+                'max-sm:flex-col': !isEmbedded,
+              })}
             >
-              <span className="font-bold">{profileData.profile.name}</span>
-              &nbsp;
-              <span className="text-muted-foreground">
-                @{profileData.handle}
-              </span>
-            </a>
-            <div className="ml-auto flex items-center gap-2 text-muted-foreground">
-              {date && !isEmbedded && (
-                <a
-                  href={`${WEB_APP}/profile/${atUri.hostname}/post/${atUri.rkey}`}
-                >
+              <a
+                href={links.profile}
+                target="_blank"
+                className="flex flex-wrap"
+              >
+                <PostAvatar
+                  hostname={atUri.hostname}
+                  src={profileData.profile.photo}
+                  isEmbedded={isEmbedded}
+                  className={cn({
+                    hidden: !isEmbedded,
+                    'mr-2 block lg:hidden': isEmbedded,
+                  })}
+                />
+                <span className="font-bold">{profileData.profile.name}</span>
+                &nbsp;
+                <span className="max-w-[24ch] overflow-hidden text-ellipsis text-muted-foreground max-sm:w-full">
+                  @{profileData.handle}
+                </span>
+              </a>
+              <div className="flex items-center gap-2 text-muted-foreground sm:ml-auto">
+                {date && !isEmbedded && (
                   <time
                     dateTime={date.ISO}
                     title={date.locale}
-                    // aria-label={`${relativeDate} — click to open the post in the Bluesky web app`}
+                    className="max-sm:text-xs"
                   >
                     {date.formatted}
                   </time>
-                </a>
-              )}
-              {!isEmbedded && (
+                )}
+
                 <a
-                  href={`${WEB_APP}/profile/${atUri.hostname}/post/${atUri.rkey}`}
-                  className="hover:text-primary"
+                  href={links.post}
+                  className="right-4 top-3 hover:text-primary max-sm:absolute"
+                  target="_blank"
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink
+                    className={cn('h-4 w-4', isEmbedded && 'h-3 w-3')}
+                  />
+                  <span className="sr-only">
+                    Ver sobre o post de {profileData.profile.name} no Bluesky
+                  </span>
                 </a>
-              )}
+              </div>
             </div>
-          </div>
-          <div>
-            <RichText text={post.text} facets={post.facets} />
-          </div>
-          {post.embed && (
-            <div className="mt-2">
-              <PostEmbed embed={post.embed} did={atUri.hostname} />
+            <div className="w-full">
+              <RichText text={post.text} facets={post.facets} />
             </div>
-          )}
-        </div>
-        {/* {post.embed ? (
+            {post.embed && (
+              <div className="mt-2">
+                <PostEmbed embed={post.embed} did={atUri.hostname} />
+              </div>
+            )}
+          </div>
+          {/* {post.embed ? (
         AppBskyEmbedImages.isMain(post.embed) ? (
           <PostImages
             service={service}
@@ -162,7 +204,8 @@ export const Post = forwardRef<HTMLElement, PostProps>(
           Open post in the Bluesky web app
         </a>
       )} */}
-      </article>
+        </article>
+      </ErrorBoundary>
     );
   },
 );

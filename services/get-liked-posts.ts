@@ -8,11 +8,9 @@ import {
   InfiniteData,
   QueryKey,
   useInfiniteQuery,
-  UseInfiniteQueryOptions,
 } from '@tanstack/react-query';
-import useSWR, { SWRConfiguration } from 'swr';
 
-import { DEFAULT_SERVICE } from '@/constants';
+import { DEFAULT_SERVICE, TWEETS_PER_PAGE } from '@/constants';
 
 type GetLikedPostsParams = {
   service?: string;
@@ -47,6 +45,8 @@ export type LikedPostsResponse = {
   cursor: string | undefined;
 };
 
+// const domainRegex = /^[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,6}$/i;
+
 export async function getLikedPosts({
   service = DEFAULT_SERVICE,
   handle,
@@ -54,14 +54,18 @@ export async function getLikedPosts({
 }: GetLikedPostsParams) {
   const agent = new AtpAgent({ service });
 
-  console.log('cursor usado', cursor);
+  const formattedHandle = handle?.replace('@', '') ?? '';
+
+  // const handleWithDomain = domainRegex.test(formattedHandle)
+  //   ? formattedHandle
+  //   : `${formattedHandle}.bsky.social`;
 
   const {
     data: { records, cursor: newCursor },
   } = await agent.com.atproto.repo.listRecords({
-    repo: handle ?? '',
+    repo: formattedHandle ?? '',
     collection: 'app.bsky.feed.like',
-    limit: 5,
+    limit: TWEETS_PER_PAGE,
     cursor,
   });
 
@@ -122,13 +126,6 @@ export function useLikedPosts({ service, handle }: UseLikedPostsParams) {
       getLikedPosts({ service, handle, cursor: pageParam }),
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.cursor,
+    enabled: Boolean(handle),
   });
-
-  // return useSWR<LikedPostsResponse>(
-  //   handle ? [service, handle, cursor] : undefined,
-  //   () => {
-  //     return getLikedPosts({ service, handle, cursor });
-  //   },
-  //   options,
-  // );
 }
