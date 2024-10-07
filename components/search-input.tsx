@@ -12,8 +12,8 @@ export function SearchInput({
 }: ComponentProps<typeof Input>) {
   return (
     <div className={cn('relative w-full', className)}>
-      <Input className="pr-10" {...props} />
-      <Button className="xs:block absolute right-0 top-0 hidden rounded-md font-semibold hover:bg-transparent lg:hidden">
+      <Input className="xs:pr-28 lg:pr-3" inputMode="search" {...props} />
+      <Button className="absolute right-0 top-0 hidden select-none rounded-md font-semibold hover:bg-transparent xs:block lg:hidden">
         Pesquisar
       </Button>
     </div>

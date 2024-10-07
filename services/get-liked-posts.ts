@@ -45,8 +45,6 @@ export type LikedPostsResponse = {
   cursor: string | undefined;
 };
 
-// const domainRegex = /^[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,6}$/i;
-
 export async function getLikedPosts({
   service = DEFAULT_SERVICE,
   handle,
@@ -54,16 +52,12 @@ export async function getLikedPosts({
 }: GetLikedPostsParams) {
   const agent = new AtpAgent({ service });
 
-  const formattedHandle = handle?.replace('@', '') ?? '';
-
-  // const handleWithDomain = domainRegex.test(formattedHandle)
-  //   ? formattedHandle
-  //   : `${formattedHandle}.bsky.social`;
+  // console.log('cursor usado ', cursor);
 
   const {
     data: { records, cursor: newCursor },
   } = await agent.com.atproto.repo.listRecords({
-    repo: formattedHandle ?? '',
+    repo: handle ?? '',
     collection: 'app.bsky.feed.like',
     limit: TWEETS_PER_PAGE,
     cursor,

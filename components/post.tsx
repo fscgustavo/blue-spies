@@ -1,6 +1,7 @@
 'use client';
 
 import { AppBskyFeedPost, AtUri } from '@atproto/api';
+import { sendGAEvent } from '@next/third-parties/google';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
@@ -70,14 +71,23 @@ export const Post = forwardRef<HTMLElement, PostProps>(
       post: `${WEB_APP}/profile/${atUri.hostname}/post/${atUri.rkey}`,
     };
 
+    function onPostError(error: Error) {
+      sendGAEvent('event', 'error', {
+        category: 'Erro',
+        action: 'Post descartado',
+        description: error?.cause ?? error.message,
+        nonInteraction: true,
+      });
+    }
+
     return (
-      <ErrorBoundary fallback={null}>
+      <ErrorBoundary fallback={null} onError={onPostError}>
         <article
           className={cn(
             'relative flex gap-3 border-b text-sm text-card-foreground lg:text-base',
             {
               'rounded-sm border p-3': isEmbedded,
-              'border-b px-4 py-3 first:border-t last:border-b-0 last:pb-10 lg:first:border-t-0 lg:first:pt-8':
+              'border-b px-4 py-3 first:border-t last:border-b-0 last:pb-10':
                 !isEmbedded,
             },
           )}
@@ -103,7 +113,7 @@ export const Post = forwardRef<HTMLElement, PostProps>(
               <a
                 href={links.profile}
                 target="_blank"
-                className="flex flex-wrap"
+                className="flex flex-wrap max-sm:pr-4"
               >
                 <PostAvatar
                   hostname={atUri.hostname}
@@ -116,7 +126,7 @@ export const Post = forwardRef<HTMLElement, PostProps>(
                 />
                 <span className="font-bold">{profileData.profile.name}</span>
                 &nbsp;
-                <span className="max-w-[24ch] overflow-hidden text-ellipsis text-muted-foreground max-sm:w-full">
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap text-muted-foreground">
                   @{profileData.handle}
                 </span>
               </a>
@@ -150,7 +160,11 @@ export const Post = forwardRef<HTMLElement, PostProps>(
             </div>
             {post.embed && (
               <div className="mt-2">
-                <PostEmbed embed={post.embed} did={atUri.hostname} />
+                <PostEmbed
+                  embed={post.embed}
+                  did={atUri.hostname}
+                  isEmbedded={isEmbedded}
+                />
               </div>
             )}
           </div>

@@ -1,3 +1,4 @@
+import { UserRound } from 'lucide-react';
 import Image, { ImageProps } from 'next/image';
 
 import { cn } from '@/lib/utils';
@@ -13,6 +14,23 @@ export function PostAvatar({
   className,
   ...props
 }: PostAvatarProps) {
+  if (!props.src) {
+    return (
+      <div className="rounded-full bg-primary p-1">
+        <UserRound
+          className={cn(
+            'h-fit rounded-full fill-white text-primary',
+            {
+              'max-lg:h-8 max-lg:w-8': !isEmbedded,
+              'h-6 w-6': isEmbedded,
+            },
+            className,
+          )}
+        />
+      </div>
+    );
+  }
+
   return (
     <Image
       width="48"

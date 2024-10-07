@@ -1,3 +1,4 @@
+import { sendGAEvent } from '@next/third-parties/google';
 import { useQueryState } from 'nuqs';
 import { FormEvent, useState } from 'react';
 
@@ -7,12 +8,17 @@ import { SearchInput } from './search-input';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 
+const handleRegex =
+  /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
+
 export function HandleForm() {
   const [handle, setHandle] = useQueryState('handle', { defaultValue: '' });
   const [error, setError] = useState<string | undefined>(undefined);
 
   function onHandleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    setHandle('');
 
     const formData = new FormData(event.currentTarget);
 
@@ -24,7 +30,17 @@ export function HandleForm() {
       return;
     }
 
-    setHandle(typedHandle);
+    const formattedHandle = typedHandle?.replace('@', '');
+
+    const handleWithDomain = handleRegex.test(formattedHandle)
+      ? formattedHandle
+      : `${formattedHandle}.bsky.social`;
+
+    sendGAEvent('event', 'search', {
+      search_term: handleWithDomain,
+    });
+
+    setHandle(handleWithDomain);
   }
 
   function onChange() {

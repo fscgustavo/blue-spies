@@ -14,9 +14,10 @@ import { PostEmbedRecord } from './post-embed-record';
 type PostEmbedProps = {
   did: string;
   embed: AppBskyFeedPost.Record['embed'];
+  isEmbedded?: boolean;
 };
 
-export function PostEmbed({ embed, did }: PostEmbedProps) {
+export function PostEmbed({ embed, did, isEmbedded }: PostEmbedProps) {
   const isMedia =
     AppBskyEmbedImages.isMain(embed) ||
     AppBskyEmbedExternal.isMain(embed) ||
@@ -36,7 +37,7 @@ export function PostEmbed({ embed, did }: PostEmbedProps) {
     );
   }
 
-  if (AppBskyEmbedRecordWithMedia.isMain(embed)) {
+  if (AppBskyEmbedRecordWithMedia.isMain(embed) && !isEmbedded) {
     return (
       <PostEmbedRecord
         embed={embed.record}
@@ -48,7 +49,7 @@ export function PostEmbed({ embed, did }: PostEmbedProps) {
     );
   }
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' && !isEmbedded) {
     alert('formato não suportado');
   }
 

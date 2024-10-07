@@ -5,12 +5,13 @@ import {
 } from '@tanstack/react-virtual';
 import { Heart, LoaderCircle } from 'lucide-react';
 import { useQueryState } from 'nuqs';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { Post } from '@/components/post';
 import { TWEETS_PER_PAGE } from '@/constants';
 import { Post as PostType, useLikedPosts } from '@/services/get-liked-posts';
 
+import { ProfileIdentificator } from './profile-identification';
 import { Skeleton } from './ui/skeleton';
 
 export function FavoriteFeed() {
@@ -25,7 +26,10 @@ export function FavoriteFeed() {
       handle: handle,
     });
 
-  const allPosts = data ? data.pages.flatMap((page) => page.posts) : [];
+  const allPosts = useMemo(
+    () => (data?.pages ? data.pages.flatMap((page) => page.posts) : []),
+    [data?.pages],
+  );
 
   const virtualizer = useVirtualizer({
     count: allPosts.length,
@@ -37,12 +41,12 @@ export function FavoriteFeed() {
   const items = virtualizer.getVirtualItems();
 
   useEffect(() => {
-    if (
-      !infiniteScrollRef.current ||
-      isLoading ||
-      infiniteScrollObserver.current
-    ) {
+    if (!infiniteScrollRef.current || isLoading) {
       return;
+    }
+
+    if (infiniteScrollObserver.current) {
+      infiniteScrollObserver.current.disconnect();
     }
 
     infiniteScrollObserver.current = new IntersectionObserver((entries) => {
@@ -52,7 +56,11 @@ export function FavoriteFeed() {
     });
 
     infiniteScrollObserver.current.observe(infiniteScrollRef.current);
-  }, [fetchNextPage, isLoading]);
+
+    return () => {
+      infiniteScrollObserver.current?.disconnect();
+    };
+  }, [fetchNextPage, isLoading, handle, allPosts]);
 
   return (
     <div className="border-x">
@@ -62,19 +70,23 @@ export function FavoriteFeed() {
           height: allPosts.length > 0 ? virtualizer.getTotalSize() : 'auto',
         }}
       >
-        <PostList
-          items={items}
-          allPosts={allPosts}
-          virtualizer={virtualizer}
-          isLoading={isLoading}
-        />
-      </section>
-      {isFetchingNextPage && hasNextPage && (
-        <div className="pb-8">
-          <LoaderCircle className="mx-auto h-6 w-6 animate-spin text-primary" />
+        <ProfileIdentificator handle={handle} />
+        <div>
+          <PostList
+            items={items}
+            allPosts={allPosts}
+            virtualizer={virtualizer}
+            isLoading={isLoading}
+          />
         </div>
-      )}
-      {hasNextPage && <div ref={infiniteScrollRef} />}
+        {isFetchingNextPage && hasNextPage && (
+          <div className="pb-8">
+            <LoaderCircle className="mx-auto h-6 w-6 animate-spin text-primary" />
+          </div>
+        )}
+      </section>
+
+      {!isLoading && items.length > 0 && <div ref={infiniteScrollRef} />}
     </div>
   );
 }
@@ -90,7 +102,7 @@ function PostList({ items, allPosts, virtualizer, isLoading }: PostListProps) {
   if (isLoading || (items.length === 0 && allPosts.length > 0)) {
     return [...Array(TWEETS_PER_PAGE).keys()].map((index) => (
       <div
-        className="relative flex flex-col gap-3 border-b px-4 py-3 text-sm text-card-foreground first:border-t last:border-b-0 last:pb-10 lg:text-base lg:first:border-t-0 lg:first:pt-8"
+        className="relative flex flex-col gap-3 border-b px-4 py-3 text-sm text-card-foreground first:border-t last:border-b-0 last:pb-10 lg:text-base lg:first:pt-8"
         key={index}
       >
         <div className="mb-1 flex gap-2 sm:items-center">
@@ -116,7 +128,7 @@ function PostList({ items, allPosts, virtualizer, isLoading }: PostListProps) {
         <div className="mx-auto flex h-screen max-w-[70%] flex-col items-center gap-6 p-4 pt-20 text-center text-muted-foreground">
           <Heart className="h-16 w-16 text-muted-foreground" />
           <p>
-            Quando você digitar o arroba de um perfil, os posts curtidos
+            Quando você pesquisar pelo arroba de um perfil, os posts curtidos
             aparecerão aqui.
           </p>
         </div>
