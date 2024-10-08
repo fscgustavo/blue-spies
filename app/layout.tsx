@@ -20,7 +20,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: 'BlueSpies',
   description: 'Veja todas as curtidas de qualquer perfil do Bluesky',
-  keywords: ['Bluesky', 'curtidas', 'likes', 'perfil'],
+  keywords: ['Bluesky', 'curtidas', 'likes', 'perfil', 'tweet', 'post'],
   applicationName: 'BlueSpies',
 };
 

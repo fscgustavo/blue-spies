@@ -1,4 +1,5 @@
 import { sendGAEvent } from '@next/third-parties/google';
+import { track } from '@vercel/analytics';
 import { useQueryState } from 'nuqs';
 import { FormEvent, useState } from 'react';
 
@@ -39,6 +40,14 @@ export function HandleForm() {
     sendGAEvent('event', 'search', {
       search_term: handleWithDomain,
     });
+
+    track(
+      'Search',
+      {
+        value: handleWithDomain,
+      },
+      { flags: ['search'] },
+    );
 
     setHandle(handleWithDomain);
   }
