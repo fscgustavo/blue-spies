@@ -3,7 +3,7 @@ import {
   VirtualItem,
   Virtualizer,
 } from '@tanstack/react-virtual';
-import { Heart, LoaderCircle } from 'lucide-react';
+import { ArchiveX, Heart, LoaderCircle } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import { useEffect, useMemo, useRef } from 'react';
 
@@ -73,6 +73,7 @@ export function FavoriteFeed() {
         <ProfileIdentificator handle={handle} />
         <div>
           <PostList
+            handle={handle}
             items={items}
             allPosts={allPosts}
             virtualizer={virtualizer}
@@ -96,9 +97,16 @@ type PostListProps = {
   allPosts: PostType[];
   virtualizer: Virtualizer<Element, Element>;
   isLoading: boolean;
+  handle: string | null;
 };
 
-function PostList({ items, allPosts, virtualizer, isLoading }: PostListProps) {
+function PostList({
+  items,
+  allPosts,
+  virtualizer,
+  handle,
+  isLoading,
+}: PostListProps) {
   if (isLoading || (items.length === 0 && allPosts.length > 0)) {
     return [...Array(TWEETS_PER_PAGE).keys()].map((index) => (
       <div
@@ -122,7 +130,7 @@ function PostList({ items, allPosts, virtualizer, isLoading }: PostListProps) {
     ));
   }
 
-  if (allPosts.length === 0) {
+  if (allPosts.length === 0 && !handle) {
     return (
       <div className="border-t">
         <div className="mx-auto flex h-screen max-w-[70%] flex-col items-center gap-6 p-4 pt-20 text-center text-muted-foreground">
@@ -130,6 +138,19 @@ function PostList({ items, allPosts, virtualizer, isLoading }: PostListProps) {
           <p>
             Quando você pesquisar pelo arroba de um perfil, os posts curtidos
             aparecerão aqui.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (allPosts.length === 0 && handle) {
+    return (
+      <div className="border-t">
+        <div className="mx-auto flex h-screen max-w-[70%] flex-col items-center gap-6 p-4 pt-20 text-center text-muted-foreground">
+          <ArchiveX className="h-16 w-16 text-muted-foreground" />
+          <p className="w-[90%]">
+            Parece que {handle} ainda não curtiu nenhum post!
           </p>
         </div>
       </div>

@@ -68,13 +68,13 @@ export function Media({ embed, did }: MediaProps) {
         target="_blank"
         className="block rounded-sm border"
       >
-        {/*TODO: Alterar o alt*/}
         <Image
           src={src}
           width="1000"
           height="750"
-          alt="depois"
+          alt={embed.external.title}
           className="w-max rounded-t"
+          aria-hidden
         />
         <div className="px-4 py-2">
           <p className="font-bold">{embed.external.title}</p>
