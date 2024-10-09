@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useVirtualizer,
   VirtualItem,
@@ -136,9 +138,8 @@ function PostList({
         <div className="mx-auto flex h-screen max-w-[70%] flex-col items-center gap-6 p-4 pt-20 text-center text-muted-foreground">
           <Heart className="h-16 w-16 text-muted-foreground" />
           <p>
-            Veja os likes que qualquer perfil deu na rede social BlueSky. Quando
-            você pesquisar por uma conta válida, os posts curtidos aparecerão
-            aqui.
+            Veja os likes de qualquer perfil na rede social BlueSky. Quando você
+            pesquisar por uma conta válida, os posts curtidos aparecerão aqui.
           </p>
         </div>
       </div>

@@ -43,6 +43,8 @@ export function PostAvatar({
         },
         className,
       )}
+      placeholder="blur"
+      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPstAcAAVcAyrKrMM4AAAAASUVORK5CYII="
       {...props}
       alt={`foto de perfil do ${hostname}`}
     />
