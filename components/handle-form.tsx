@@ -27,7 +27,7 @@ export function HandleForm() {
 
     const formData = new FormData(event.currentTarget);
 
-    const typedHandle = formData?.get('handle')?.toString();
+    const typedHandle = formData?.get('handle')?.toString().trim();
 
     if (!typedHandle) {
       setError('Digite um arroba válido');
