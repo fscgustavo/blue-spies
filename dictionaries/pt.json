@@ -1,0 +1,11 @@
+{
+  "search": {
+    "label": "Digite o arroba do perfil",
+    "placeholder": "exemplo.bsky.social",
+    "button": "Pesquisar"
+  },
+  "feed": {
+    "introduction": "Veja os likes de qualquer perfil na rede social BlueSky. Quando você pesquisar por uma conta válida, os posts curtidos aparecerão aqui.",
+    "empty": "Parece que {handle} ainda não curtiu nenhum post!"
+  }
+}

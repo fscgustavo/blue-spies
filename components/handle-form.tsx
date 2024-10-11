@@ -1,10 +1,12 @@
+'use client';
+
 import { sendGAEvent } from '@next/third-parties/google';
-import { track } from '@vercel/analytics';
 import { useQueryState } from 'nuqs';
 import { FormEvent, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
+import { useDictionary } from './dictionary-provider';
 import { SearchInput } from './search-input';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
@@ -13,6 +15,8 @@ const handleRegex =
   /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
 
 export function HandleForm() {
+  const { search } = useDictionary();
+
   const [handle, setHandle] = useQueryState('handle', { defaultValue: '' });
   const [error, setError] = useState<string | undefined>(undefined);
 
@@ -41,14 +45,6 @@ export function HandleForm() {
       search_term: handleWithDomain,
     });
 
-    track(
-      'Search',
-      {
-        value: handleWithDomain,
-      },
-      { flags: ['search'] },
-    );
-
     setHandle(handleWithDomain);
   }
 
@@ -66,16 +62,20 @@ export function HandleForm() {
             error && 'text-destructive',
           )}
         >
-          Digite o arroba do perfil
+          {search.label}
         </Label>
         <SearchInput
           id="handle"
           defaultValue={handle}
           className="w-full max-w-[30rem]"
           name="handle"
-          placeholder="exemplo.bsky.social"
+          placeholder={search.placeholder}
           onChange={onChange}
-        />
+        >
+          <Button className="absolute right-0 top-0 hidden select-none rounded-md font-semibold hover:bg-transparent xs:block lg:hidden">
+            {search.button}
+          </Button>
+        </SearchInput>
         {error && (
           <p
             id="handle-description"
@@ -86,7 +86,7 @@ export function HandleForm() {
         )}
       </div>
       <Button className="block font-semibold xs:hidden lg:block">
-        Pesquisar
+        {search.button}
       </Button>
     </form>
   );

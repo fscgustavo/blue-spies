@@ -8,5 +8,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 1,
     },
+    {
+      url: 'https://bluespies.com/pt',
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1,
+    },
+    {
+      url: 'https://bluespies.com/en',
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1,
+    },
+    {
+      url: 'https://bluespies.com/es',
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1,
+    },
   ];
 }

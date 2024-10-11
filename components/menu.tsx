@@ -8,7 +8,10 @@ export function Menu() {
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2 text-xl">
           <Binoculars className="h-8 w-8 text-primary" />
-          <span className="cursor-default font-bold text-primary">
+          <span
+            className="cursor-default font-bold text-primary"
+            translate="no"
+          >
             BlueSpies
           </span>
         </div>

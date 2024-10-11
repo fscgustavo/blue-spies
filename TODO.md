@@ -1,10 +1,15 @@
 - [x] @s e hashtags em um texto precisam ter hightlight
 - [x] Embedded vai precisar de external link sim
 - [x] Os vídeos precisam de um preview
-- [] Como vem o tweet que é uma resposta?
+- [x] Como vem o tweet que é uma resposta?
 - [x] Testar embedded de embedded
 - [x] Estilizar hashtag
 - [] Dialog das imagens
 - [x] Carregamento
 - [x] Tela vazia
 - [] O post que recebeu reply
+- [] Corrigir o horário de exibição
+- [] Exemplo de @
+- [] Outras línguas
+- [] foto de perfil do did:plc:r7pdvbgscp4qnajc6wv4hyt5
+- [] às vezes fica um espação em branco no infinite scroll

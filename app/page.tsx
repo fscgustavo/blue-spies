@@ -1,5 +1,3 @@
-'use client';
-
 import { Suspense } from 'react';
 
 import { FavoriteFeed } from '@/components/favorite-feed';

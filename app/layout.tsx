@@ -4,7 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
-import { Providers } from '@/components/providers';
+import { ClientEffects } from '@/components/client-effects';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -26,15 +26,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  params: { lang },
 }: Readonly<{
   children: React.ReactNode;
+  params: { lang: string };
 }>) {
   return (
-    <html lang="en">
+    <html lang={lang}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <ClientEffects>{children}</ClientEffects>
         <Analytics />
       </body>
     </html>

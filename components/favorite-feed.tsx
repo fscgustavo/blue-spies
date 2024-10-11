@@ -13,6 +13,7 @@ import { Post } from '@/components/post';
 import { TWEETS_PER_PAGE } from '@/constants';
 import { Post as PostType, useLikedPosts } from '@/services/get-liked-posts';
 
+import { useDictionary } from './dictionary-provider';
 import { ProfileIdentificator } from './profile-identification';
 import { Skeleton } from './ui/skeleton';
 
@@ -109,6 +110,8 @@ function PostList({
   handle,
   isLoading,
 }: PostListProps) {
+  const { feed } = useDictionary();
+
   if (isLoading || (items.length === 0 && allPosts.length > 0)) {
     return [...Array(TWEETS_PER_PAGE).keys()].map((index) => (
       <div
@@ -137,10 +140,7 @@ function PostList({
       <div className="border-t">
         <div className="mx-auto flex h-screen max-w-[70%] flex-col items-center gap-6 p-4 pt-20 text-center text-muted-foreground">
           <Heart className="h-16 w-16 text-muted-foreground" />
-          <p>
-            Veja os likes de qualquer perfil na rede social BlueSky. Quando você
-            pesquisar por uma conta válida, os posts curtidos aparecerão aqui.
-          </p>
+          <p>{feed.introduction}</p>
         </div>
       </div>
     );
@@ -151,9 +151,7 @@ function PostList({
       <div className="border-t">
         <div className="mx-auto flex h-screen max-w-[70%] flex-col items-center gap-6 p-4 pt-20 text-center text-muted-foreground">
           <ArchiveX className="h-16 w-16 text-muted-foreground" />
-          <p className="w-[90%]">
-            Parece que {handle} ainda não curtiu nenhum post!
-          </p>
+          <p className="w-[90%]">{feed.empty.replace('{handle}', handle)}</p>
         </div>
       </div>
     );

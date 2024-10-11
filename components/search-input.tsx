@@ -1,15 +1,19 @@
 'use client';
 
-import { ComponentProps } from 'react';
+import { ComponentProps, ReactNode } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
+type SearchInputProps = {
+  children: ReactNode;
+} & ComponentProps<typeof Input>;
+
 export function SearchInput({
   className,
+  children,
   ...props
-}: ComponentProps<typeof Input>) {
+}: SearchInputProps) {
   return (
     <div className={cn('relative w-full', className)}>
       <Input
@@ -18,9 +22,7 @@ export function SearchInput({
         autoCapitalize="off"
         {...props}
       />
-      <Button className="absolute right-0 top-0 hidden select-none rounded-md font-semibold hover:bg-transparent xs:block lg:hidden">
-        Pesquisar
-      </Button>
+      {children}
     </div>
   );
 }

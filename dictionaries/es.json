@@ -1,0 +1,11 @@
+{
+  "search": {
+    "label": "Ingresa el handle del perfil",
+    "placeholder": "ejemplo.bsky.social",
+    "button": "Buscar"
+  },
+  "feed": {
+    "introduction": "Ver los me gusta de cualquier perfil en la red social BlueSky. Cuando busques una cuenta válida, las publicaciones que le gustaron aparecerán aquí.",
+    "empty": "¡Parece que {handle} no ha dado me gusta a ninguna publicación todavía!"
+  }
+}

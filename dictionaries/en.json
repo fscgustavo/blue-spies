@@ -1,0 +1,11 @@
+{
+  "search": {
+    "label": "Enter the profile's handle",
+    "placeholder": "example.bsky.social",
+    "button": "Search"
+  },
+  "feed": {
+    "introduction": "View the likes of any profile on the BlueSky social network. When you search for a valid account, the liked posts will appear here.",
+    "empty": "Looks like {handle} hasn't liked any posts yet!"
+  }
+}
