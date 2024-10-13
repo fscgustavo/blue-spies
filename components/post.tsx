@@ -52,7 +52,7 @@ export const Post = forwardRef<HTMLElement, PostProps>(
       const postDate = new Date(post.createdAt);
 
       return {
-        formatted: format(postDate, 'dd/MM/yyyy hh:mm'),
+        formatted: format(postDate, 'dd/MM/yyyy HH:mm'),
         locale: postDate.toLocaleString('pt-BR'),
         ISO: postDate.toISOString(),
       };
@@ -96,7 +96,7 @@ export const Post = forwardRef<HTMLElement, PostProps>(
         >
           <a href={links.profile} target="_blank">
             <PostAvatar
-              hostname={atUri.hostname}
+              profileName={profileData.profile.name}
               src={profileData.profile.photo}
               isEmbedded={isEmbedded}
               className={cn('shrink-0', {
@@ -116,7 +116,7 @@ export const Post = forwardRef<HTMLElement, PostProps>(
                 className="flex flex-wrap max-sm:pr-4"
               >
                 <PostAvatar
-                  hostname={atUri.hostname}
+                  profileName={profileData.profile.name}
                   src={profileData.profile.photo}
                   isEmbedded={isEmbedded}
                   className={cn({

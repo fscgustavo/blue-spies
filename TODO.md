@@ -11,6 +11,6 @@
 - [] Corrigir o horário de exibição
 - [] Exemplo de @
 - [x] Outras línguas
-- [] foto de perfil do did:plc:r7pdvbgscp4qnajc6wv4hyt5
+- [x] foto de perfil do did:plc:r7pdvbgscp4qnajc6wv4hyt5
 - [] às vezes fica um espação em branco no infinite scroll
 - [] Tem que te rregex validando

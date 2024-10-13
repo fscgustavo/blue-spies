@@ -4,12 +4,12 @@ import Image, { ImageProps } from 'next/image';
 import { cn } from '@/lib/utils';
 
 type PostAvatarProps = {
-  hostname: string;
+  profileName?: string;
   isEmbedded?: boolean;
 } & Omit<ImageProps, 'alt'>;
 
 export function PostAvatar({
-  hostname,
+  profileName,
   isEmbedded = false,
   className,
   ...props
@@ -46,7 +46,7 @@ export function PostAvatar({
       placeholder="blur"
       blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPstAcAAVcAyrKrMM4AAAAASUVORK5CYII="
       {...props}
-      alt={`foto de perfil do ${hostname}`}
+      alt={`foto de perfil${profileName ? ` de ${profileName}` : ''}`}
     />
   );
 }

@@ -48,7 +48,7 @@ export function ProfileIdentificator({
     <div className="grid gap-1 p-4 py-6 max-lg:pt-0">
       <div className="flex items-center gap-2">
         <PostAvatar
-          hostname={handle}
+          profileName={profileData?.profile.name}
           src={profileData?.profile.photo ?? ''}
           width={56}
           height={56}
