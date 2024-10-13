@@ -16,8 +16,6 @@ export async function getPost({
   const agent = new AtpAgent({ service });
   const atUri = new AtUri(uri);
 
-  // console.log({ record });
-
   const {
     data: { value },
   } = await agent.com.atproto.repo.getRecord({

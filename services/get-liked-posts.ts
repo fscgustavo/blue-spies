@@ -52,8 +52,6 @@ export async function getLikedPosts({
 }: GetLikedPostsParams) {
   const agent = new AtpAgent({ service });
 
-  // console.log('cursor usado ', cursor);
-
   const {
     data: { records, cursor: newCursor },
   } = await agent.com.atproto.repo.listRecords({

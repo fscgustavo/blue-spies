@@ -1,5 +1,10 @@
-import { Metadata } from 'next';
+import '../globals.css';
 
+import { Analytics } from '@vercel/analytics/react';
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+
+import { ClientEffects } from '@/components/client-effects';
 import DictionaryProvider from '@/components/dictionary-provider';
 
 import { getDictionary } from './dictionaries';
@@ -28,7 +33,7 @@ export function generateMetadata({ params: { lang = 'pt' } }: Props): Metadata {
 
   return {
     title: 'BlueSpies',
-    description: '',
+    description: langMetadata.description,
     keywords: [
       'BlueSky',
       'likes',
@@ -46,16 +51,36 @@ export function generateStaticParams() {
   return [{ lang: 'pt' }, { lang: 'en' }, { lang: 'es' }];
 }
 
+const geistSans = localFont({
+  src: '../fonts/GeistVF.woff',
+  variable: '--font-geist-sans',
+  weight: '100 900',
+});
+const geistMono = localFont({
+  src: '../fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
+  weight: '100 900',
+});
+
 export default async function RootLayout({
   children,
   params: { lang },
 }: Readonly<{
   children: React.ReactNode;
-  params: { lang: string };
+  params: Props['params'];
 }>) {
   const dictionary = await getDictionary(lang);
 
   return (
-    <DictionaryProvider dictionary={dictionary}>{children}</DictionaryProvider>
+    <html lang={lang}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <DictionaryProvider dictionary={dictionary}>
+          <ClientEffects>{children}</ClientEffects>
+          <Analytics />
+        </DictionaryProvider>
+      </body>
+    </html>
   );
 }
