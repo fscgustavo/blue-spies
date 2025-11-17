@@ -1,6 +1,6 @@
 Easily view the posts liked by any Bluesky user.
 
-https://bluespies.com
+https://bluespy.vercel.app
 
 ## Getting Started
 
